@@ -12,7 +12,6 @@
 }
 html,
 body {
-    margin: 0;
     padding: 0;
     max-width: 1500px;
     margin: auto;
@@ -28,6 +27,7 @@ header {
     h1 {
         color: white;
         font-size: 1.5rem;
+        margin-bottom: 2rem;
     }
 
     form {
@@ -103,25 +103,34 @@ header {
     header {
         background-image: url("../assets/images/pattern-bg-desktop.png");
         background-size: cover;
+        height: 220px;
+
+        h1 {
+            font-size: 2rem;
+        }
     }
     form {
-        max-width: 400px;
+        max-width: 500px;
         margin: auto;
+
+        input {
+            font-size: 1rem;
+        }
     }
 
     .results {
         max-width: 80%;
-        margin: 3rem auto;
+        margin: 2rem auto;
         display: grid;
         grid-template-columns: repeat(4, 1fr);
         gap: 2rem;
-        height: 100px;
+        min-height: 120px;
 
         & > div {
             text-align: left;
 
             & span {
-                font-size: 20px;
+                font-size: 1.5rem;
                 font-weight: 500;
             }
         }
