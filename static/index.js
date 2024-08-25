@@ -4,6 +4,19 @@ const ip = document.getElementById("ip");
 const timezone = document.getElementById("timezone");
 const form = document.getElementById("form");
 
+// Custom icon setup
+// used chatgpt to generate the icon points correctly
+const customIcon = L.icon({
+    iconUrl: "../assets/images/icon-location.svg",
+    shadowUrl: "../assets/images/icon-shadow.svg",
+
+    iconSize: [46, 56], // size of the icon
+    shadowSize: [50, 64], // size of the shadow
+    iconAnchor: [23, 56], // point of the icon which will correspond to marker's location
+    shadowAnchor: [13, 54], // the same for the shadow
+    popupAnchor: [0, -56], // point from which the popup should open relative to the iconAnchor
+});
+
 form.addEventListener("submit", (e) => {
     e.preventDefault();
     const customIP = e.target.elements.customIP.value;
@@ -64,6 +77,6 @@ const updateData = (ip, isp, city, region, timezone, postalCode) => {
 };
 
 const updateMap = (lat, lng) => {
-    L.marker([lat, lng]).addTo(map);
+    L.marker([lat, lng], { icon: customIcon }).addTo(map);
     map.setView([lat, lng], 15);
 };
