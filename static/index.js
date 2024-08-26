@@ -22,38 +22,41 @@ form.addEventListener("submit", (e) => {
     const customIP = e.target.elements.customIP.value;
     getInfo(customIP);
 });
-
-const elements = {
-    isp,
-    loc,
-    ip,
-    timezone,
-};
 // map object
 var map;
 
-window.onload = async () => {
-    initMap();
+function main() {
+    map = initMap();
     getInfo();
-};
+}
 
 const initMap = (defaultView = 15) => {
     if (defaultView <= 0) {
         throw Error("View value can't be less than 1");
     }
-    map = L.map("map").setView([10, 10], defaultView);
+    const map = L.map("map").setView([10, 10], defaultView);
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 20,
         attribution:
             '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     }).addTo(map);
+
+    return map;
 };
 
 const fetchData = async (url) => {
-    const response = await fetch(url);
-    const result = await response.json();
-    console.log(result);
-    return result;
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(
+                `Failed to get data. ${response.status}: ${response.statusText}`
+            );
+        }
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        console.log(error);
+    }
 };
 
 const getInfo = async (ipAddress = null) => {
@@ -63,20 +66,34 @@ const getInfo = async (ipAddress = null) => {
         url += `&ipAddress=${ipAddress}`;
     }
     const data = await fetchData(url);
-    const { lat, lng, timezone, city, region, postalCode } = data.location;
-    const { ip, isp } = data;
-    updateData(ip, isp, city, region, timezone, postalCode);
-    updateMap(lat, lng);
+    if (data && data.location) {
+        const { lat, lng, timezone, city, region, postalCode } = data.location;
+        const { ip, isp } = data;
+        updateData(ip, isp, city, region, timezone, postalCode);
+        updateMap(lat, lng);
+    } else {
+        alert("Failed to get data");
+    }
 };
 
-const updateData = (ip, isp, city, region, timezone, postalCode) => {
-    elements.ip.textContent = ip;
-    elements.isp.textContent = isp;
-    elements.loc.textContent = city + " , " + region + " " + postalCode;
-    elements.timezone.textContent = "UTC " + timezone;
+const updateData = (
+    ipAddress,
+    isp1,
+    city1,
+    region1,
+    timezone1,
+    postalCode1
+) => {
+    ip.textContent = ipAddress;
+    isp.textContent = isp1;
+    loc.textContent = city1 + " , " + region1 + " " + postalCode1;
+    timezone.textContent = "UTC " + timezone1;
 };
 
 const updateMap = (lat, lng) => {
-    L.marker([lat, lng], { icon: customIcon }).addTo(map);
-    map.setView([lat, lng], 15);
+    if (map) {
+        L.marker([lat, lng], { icon: customIcon }).addTo(map);
+        map.setView([lat, lng], 15);
+    }
 };
+main();
